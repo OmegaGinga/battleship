@@ -1,6 +1,8 @@
 // test.js
 const { Ship } = require('./ship.js');
 const { GameBoard } = require('./gameboard.js');
+const { Player } = require('./player.js');
+const { ComputerPlayer } = require('./com.js');
 
 test('Is sunk', () => {
     const ship = Ship(2); // Provide a length for the ship.
@@ -72,4 +74,79 @@ test('There is ship left?', () => {
 
     expect(gameBoard.receiveAttack(6, 2)).toBe('Already hit');
 
+});
+
+describe('ComputerPlayer', () => {
+    let computerPlayer;
+
+    beforeEach(() => {
+        computerPlayer = ComputerPlayer();
+    });
+
+    test('should generate a board with no overlapping ships', () => {
+        const nodesWithShips = computerPlayer.computerBoard.nodes.filter(node => node.ship);
+        const ships = new Set(nodesWithShips.map(node => node.ship));
+
+        ships.forEach(ship => {
+            const positions = nodesWithShips.filter(node => node.ship === ship);
+            const shipLength = ship.length;
+
+            expect(positions.length).toBe(shipLength);
+
+            const isHorizontal = positions.every((node, i, arr) => {
+                return i === 0 || node.y === arr[i - 1].y + 1 && node.x === arr[i - 1].x;
+            });
+
+            const isVertical = positions.every((node, i, arr) => {
+                return i === 0 || node.x === arr[i - 1].x + 1 && node.y === arr[i - 1].y;
+            });
+
+            expect(isHorizontal || isVertical).toBeTruthy();
+        });
+    });
+
+    test('should successfully attack random positions on the board', () => {
+        const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+        for (let i = 0; i < 20; i++) {
+            computerPlayer.computerAttack();
+        }
+
+        const attackedNodes = computerPlayer.computerBoard.nodes.filter(node => node.hit);
+        expect(attackedNodes.length).toBeGreaterThan(0);
+
+        const attackedPositions = new Set(attackedNodes.map(node => `${node.x},${node.y}`));
+        expect(attackedPositions.size).toBe(attackedNodes.length);
+
+        consoleSpy.mockRestore();
+    });
+
+    test('should not attack the same position twice', () => {
+        const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+        computerPlayer.computerAttack();
+
+        const attackedNodes = computerPlayer.computerBoard.nodes.filter(node => node.hit);
+        expect(attackedNodes.length).toBe(1);
+
+        computerPlayer.computerAttack();
+        const newAttackedNodes = computerPlayer.computerBoard.nodes.filter(node => node.hit);
+        expect(newAttackedNodes.length).toBeGreaterThanOrEqual(attackedNodes.length);
+
+        consoleSpy.mockRestore();
+    });
+
+    test('should place all required ships', () => {
+        const shipSizes = [1, 1, 1, 1, 2, 2, 2, 3, 3, 4];
+        const nodesWithShips = computerPlayer.computerBoard.nodes.filter(node => node.ship);
+        const ships = new Set(nodesWithShips.map(node => node.ship));
+
+        expect(ships.size).toBe(shipSizes.length);
+
+        const shipLengths = Array.from(ships).map(ship => {
+            return nodesWithShips.filter(node => node.ship === ship).length;
+        });
+        shipLengths.sort((a, b) => a - b);
+        expect(shipLengths).toEqual(shipSizes.sort((a, b) => a - b));
+    });
 });
