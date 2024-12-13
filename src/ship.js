@@ -5,7 +5,6 @@ const Ship = (length) =>{
 
     function hit(){
         timesHit += 1;
-        console.log('The ship has been hit');
         return isSunk();
     }
 
