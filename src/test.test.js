@@ -1,6 +1,6 @@
 // test.js
 const { Ship } = require('./ship.js');
-const { Node, GameBoard } = require('./gameboard.js');
+const { GameBoard } = require('./gameboard.js');
 
 test('Is sunk', () => {
     const ship = Ship(2); // Provide a length for the ship.
@@ -40,4 +40,36 @@ test('Place ship on game board', () => {
     gameBoard.generateBoard();
     expect(gameBoard.placeShip(4,4, 4, 'horizontal')).toBeTruthy();
     expect(gameBoard.placeShip(8,8, 10, 'horizontal')).toBeFalsy();
+});
+
+test('Ship is hit', () => {
+    const gameBoard = GameBoard();
+    gameBoard.generateBoard();
+    gameBoard.placeShip(4, 4, 2, 'horizontal');
+    gameBoard.placeShip(6, 2, 1, 'horizontal');
+    
+    expect(gameBoard.receiveAttack(4, 4)).toBe('Hit');
+
+    expect(gameBoard.receiveAttack(4, 4)).toBe('Already hit');
+
+    expect(gameBoard.receiveAttack(4, 5)).toBe('The boat is sunk');      
+    
+    expect(gameBoard.receiveAttack(4, 4)).toBe('Already hit');
+
+    expect(gameBoard.receiveAttack(6, 4)).toBe('Missed');
+});
+
+test('There is ship left?', () => {
+    const gameBoard = GameBoard();
+    gameBoard.generateBoard();
+    gameBoard.placeShip(6, 2, 1, 'horizontal');
+
+    expect(gameBoard.availableShipsLeft()).toBeTruthy();
+
+    gameBoard.receiveAttack(6, 2);
+
+    expect(gameBoard.availableShipsLeft()).toBeFalsy();
+
+    expect(gameBoard.receiveAttack(6, 2)).toBe('Already hit');
+
 });

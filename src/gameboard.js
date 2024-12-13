@@ -1,4 +1,3 @@
-const { node } = require("webpack");
 const { Ship } = require('./ship.js');
 
 const Node = (x, y) => {
@@ -13,6 +12,7 @@ const Node = (x, y) => {
 
 const GameBoard = () => {
     const nodes = [];
+    const availableShips = [];
 
     function generateBoard(){
         const rows = 10;
@@ -72,20 +72,50 @@ const GameBoard = () => {
                 node.ship = ship;
             }
         }
-    
-        return true;
-    }
 
+        availableShips.push(ship);
+        return true;
+    };
+
+    function receiveAttack(x, y) {
+        const node = nodes[x * 10 + y];
+    
+        if (node.hit) return 'Already hit';
+    
+        node.hit = true;
+    
+        if (!node.ship) {
+            return 'Missed';
+        } else {
+            node.ship.hit();
+            if (node.ship.isSunk()) {
+                const index = availableShips.indexOf(node.ship);
+                if (index !== -1) {
+                    availableShips.splice(index, 1);
+                }
+                return 'The boat is sunk';
+            }
+            return 'Hit';
+        }
+    };
+
+    function availableShipsLeft(){
+        if (availableShips.length === 0){
+            return false;
+        }
+        return availableShips;
+    }
     
     return {
         generateBoard,
         placeShip,
+        receiveAttack,
+        availableShipsLeft,
         nodes,
     }
 
 };
 
 module.exports = {
-    Node,
     GameBoard,
 }

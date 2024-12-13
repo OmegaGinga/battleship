@@ -1,27 +1,23 @@
 // ship.js
 
-const Ship = (length) =>{
+const Ship = (length) => {
     let timesHit = 0;
 
-    function hit(){
+    function hit() {
         timesHit += 1;
+        console.log('The ship has been hit');
         return isSunk();
     }
 
-    function isSunk(){
-        let sunk = false;
-        if(timesHit === length){
-            sunk = true;
-        }
-        return sunk;
-    };
-
-    return{
-        hit,
-        isSunk,
+    function isSunk() {
+        return timesHit === length;
     }
 
-}
+    return {
+        hit,
+        isSunk,
+    };
+};
 
 module.exports = {
     Ship,
