@@ -1,4 +1,92 @@
 /* styles.css */
+
+/*Very basic reset*/
+*{
+  padding: 0;
+  margin: 0;
+}
+
 body {
-    background-color: rebeccapurple;
+    background-color: #002D52;
+    box-sizing: border-box;
+  }
+
+  .game-ui{
+    display: flex;
+    flex-direction: column;
+  }
+
+  .game-board1, .game-board2 {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    width: 300px;
+    height: 300px;
+  }
+
+  .board-grid{
+    border: 2px solid #0088D2;
+    background-color: #021993;
+    display: flex;
+    justify-content: center;    
+    align-items: center;
+  }
+
+  .board-grid-hover:hover{
+    cursor: pointer;
+  }
+
+  .board-grid-unhover{
+    cursor: auto;
+  }
+
+  .game-board{
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .presentation{
+    display: flex;
+    justify-content: center;
+    color: white;
+  }
+
+  .ship-interface {
+    display: flex;
+    justify-content: space-around;
+    color: wheat;
+  }
+
+  .player-interface {
+    display: flex;
+    justify-content: space-around;
+    color: aliceblue;
+  }
+
+  .player1, .player2{
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .player1 img, .player2 img {
+    width: 50px;
+    border-radius: 50px;
+  }
+
+  .fleet1, .fleet2{
+   display: flex; 
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   gap: 10px;
+  }
+
+
+  .fleet{
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    grid-template-rows: repeat(2,1fr);
+    gap: 25px;
   }

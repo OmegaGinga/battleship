@@ -93,7 +93,7 @@ const GameBoard = () => {
                 if (index !== -1) {
                     availableShips.splice(index, 1);
                 }
-                return 'The boat is sunk';
+                return 'Sunk';
             }
             return 'Hit';
         }
