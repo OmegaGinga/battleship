@@ -90,3 +90,92 @@ body {
     grid-template-rows: repeat(2,1fr);
     gap: 25px;
   }
+
+  .board{
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+  }
+  .cell{
+    border: 2px solid #0088D2;
+    background-color: #021993;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .hit {
+    background-color: red;
+  }
+
+  .missed {
+      text-align: center;
+      font-weight: bold;
+  }
+
+  .click-pointer:hover{
+    cursor: pointer;
+  }
+
+  .ship-place-container{
+    display: flex;
+    justify-content: space-around;    
+  }
+
+  .ships-container {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid #0088D2;
+    gap: 10px;
+}
+
+  .ships-container1 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(1, 1fr);
+  }
+
+  .ships-container2 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(1, 1fr);
+    gap: 10px;
+  }
+  .ships-container3 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(1, 1fr);
+    gap: 10px;
+  }
+
+  .ships-container4 {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    grid-template-rows: repeat(1, 1fr);
+  }
+
+.shipDiv {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    height: fit-content;
+}
+
+.ship {
+    background-color: white;
+    border: 2px solid #0088D2;
+    width: 30px;
+    height: 30px;
+}
+
+.horizontal {
+    flex-direction: row;
+}
+
+.vertical {
+    flex-direction: column;
+}
