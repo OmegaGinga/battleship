@@ -104,6 +104,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    color: white;
+    font-family: sans-serif;
+    font-size: 1.8rem;
   }
 
   .hit {
@@ -184,4 +187,17 @@ body {
 }
 .dragging {
   opacity: 0.5;
+}
+
+.white {
+  background-color: white;
+}
+
+.temporal-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  gap: 15px;
 }
