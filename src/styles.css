@@ -122,6 +122,7 @@ body {
   .ship-place-container{
     display: flex;
     justify-content: space-around;    
+     
   }
 
   .ships-container {
@@ -130,6 +131,8 @@ body {
     flex-direction: column;
     border: 2px solid #0088D2;
     gap: 10px;
+    height: 370px;
+    width: 240px;
 }
 
   .ships-container1 {
@@ -178,4 +181,7 @@ body {
 
 .vertical {
     flex-direction: column;
+}
+.dragging {
+  opacity: 0.5;
 }

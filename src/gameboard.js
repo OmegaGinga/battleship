@@ -40,42 +40,42 @@ const GameBoard = () => {
     function placeShip(x, y, length, direction) {
         const ship = Ship(length);
     
-        // Check horizontal placement
+        if (x < 0 || x >= 10 || y < 0 || y >= 10) return false;
+    
+        // Configuración horizontal
         if (direction.toLowerCase() === 'horizontal') {
-            if (y + length > 10) return false;
-            
-            // Check if any of the cells are already occupied
+            if (y + length > 10) return false; // Cambiado a >
+    
             for (let i = 0; i < length; i++) {
                 const node = nodes[x * 10 + (y + i)];
                 if (node.ship) return false;
             }
     
-            // Place the ship on the board
             for (let i = 0; i < length; i++) {
                 const node = nodes[x * 10 + (y + i)];
                 node.ship = ship;
             }
-        } 
-        // Check vertical placement
+        }
+    
+        // Configuración vertical
         else if (direction.toLowerCase() === 'vertical') {
-            if (x + length > 10) return false;
-            
-            // Check if any of the cells are already occupied
+            if (x + length > 10) return false; // Cambiado a >
+    
             for (let i = 0; i < length; i++) {
                 const node = nodes[(x + i) * 10 + y];
-                if (node.ship) return false;
+                if (node.ship) return false;                
             }
     
-            // Place the ship on the board
             for (let i = 0; i < length; i++) {
                 const node = nodes[(x + i) * 10 + y];
                 node.ship = ship;
             }
         }
-
+    
         availableShips.push(ship);
         return true;
-    };
+    }
+    
 
     function receiveAttack(x, y) {
         const node = nodes[x * 10 + y];

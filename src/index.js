@@ -8,4 +8,6 @@ const { Player } = require('./player.js');
 const { renderBoard } = require('./boardRenderer.js');
 
 const player1 = Player();
+const player2 = Player();
 renderBoard(player1);
+renderBoard(player2)
