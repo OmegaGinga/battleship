@@ -201,3 +201,13 @@ body {
   color: white;
   gap: 15px;
 }
+
+.toggle-button-container{
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.hidden {
+  background-color: #021993;
+}
