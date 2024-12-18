@@ -67,6 +67,13 @@ function renderBoard(player, boardId) {
 
         cell.addEventListener('drop', (event) => {
             event.preventDefault();
+
+            const targetBoardId = board.getAttribute('id');
+            const shipBoardId = event.dataTransfer.getData('boardId');
+
+            if (targetBoardId !== shipBoardId) {
+                return;
+            }
         
             const shipLength = parseInt(event.dataTransfer.getData('text/plain'), 10);
             const direction = event.dataTransfer.getData('direction');
@@ -127,6 +134,8 @@ function renderBoard(player, boardId) {
 
         shipDiv.addEventListener('dragstart', (event) => {
             event.dataTransfer.setData('text/plain', shipLength);
+            event.dataTransfer.setData('boardId', boardId);
+
             if (shipDiv.classList.contains('vertical')) {
                 const direction = 'vertical';
                 event.dataTransfer.setData('direction', direction);
