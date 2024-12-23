@@ -33,11 +33,11 @@ const ComputerPlayer = () => {
             if (attackedNodes.has(`${x},${y}`)) continue;
 
             const result = computerBoard.receiveAttack(x, y);
-            attackedNodes.add(`${x},${y}`); // Mark as attacked
+            attackedNodes.add(`${x},${y}`);
 
             console.log(`Computer attacked (${x}, ${y}) and result: ${result}`);
 
-            if (result !== 'Already hit') break; // Exit the loop after a valid attack
+            if (result !== 'Already hit') break;
         }
     }
 

@@ -3,6 +3,7 @@ import "./styles.css";
 const { Ship } = require('./ship.js');
 const { GameBoard } = require('./gameboard.js');
 const { Player } = require('./player.js');
+const { ComputerPlayer } = require('./com.js');
 const { renderBoard } = require('./boardRenderer.js');
 
 let player1Name = '';

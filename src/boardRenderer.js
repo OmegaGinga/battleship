@@ -12,7 +12,14 @@ function renderBoard(player, boardId) {
     const ships = [1, 1, 1, 1, 2, 2, 2, 3, 3, 4];
     const newButtonDiv = document.createElement('div');
     const toggleButton = document.createElement('button');
+    const fleetDiv = document.createElement('div');
+    const heading = document.createElement('h2');
+    const innerDiv = document.createElement('div');
+    const shipInterface = document.querySelector('.ship-interface');
 
+    fleetDiv.setAttribute('id', boardId);
+    fleetDiv.classList.add(`fleet-${boardId}`);
+    innerDiv.classList.add('fleet-content');
     shipsContainer.classList.add('ships-container');
     shipsContainer.setAttribute('id', `${boardId}-ships-container`);
     shipsContainer1.classList.add('ships-container1');
@@ -24,6 +31,7 @@ function renderBoard(player, boardId) {
     toggleButton.textContent = 'Toggle Ships Visibility';
     toggleButtonContainer.appendChild(newButtonDiv);
     newButtonDiv.appendChild(toggleButton);
+    heading.textContent = 'FLEET';
 
     gameBoard.appendChild(board);
     
@@ -34,6 +42,10 @@ function renderBoard(player, boardId) {
     shipsContainer.appendChild(shipsContainer2);
     shipsContainer.appendChild(shipsContainer3);
     shipsContainer.appendChild(shipsContainer4);
+    fleetDiv.appendChild(heading);
+    fleetDiv.appendChild(innerDiv);
+    shipInterface.appendChild(fleetDiv);
+    
 
     playerBoard.nodes.forEach((node) => {
         const cell = document.createElement('div');
@@ -51,7 +63,8 @@ function renderBoard(player, boardId) {
     
             if (result === 'Hit' || result === 'Sunk') {
                 cell.classList.remove('white');
-                cell.classList.add('hit');
+                cell.classList.toggle('hidden');
+                cell.classList.add('hit');                
             } else if (result === 'Missed') {
                 cell.classList.add('missed');
                 cell.textContent = 'X';
@@ -91,6 +104,7 @@ function renderBoard(player, boardId) {
                         if (cellPosition) cellPosition.classList.add('white');
                     }
                 }
+
                 const shipDiv = document.getElementById(shipId);
                 const playerShipsContainer = document.querySelector(`#${boardId}-ships-container`);                
                 const shipContainers = playerShipsContainer.children;
@@ -104,7 +118,10 @@ function renderBoard(player, boardId) {
                 if (allAreEmpty) {
                     player.playerIsReady();
                     console.log('Player is ready!');
+                    playerShipsContainer.remove();
                 }
+
+                updateShips(shipLength);
                 
             }
         });
@@ -168,6 +185,15 @@ function renderBoard(player, boardId) {
             }
         });
     });
+
+    function updateShips(shipLength){
+        const fleetContent = document.querySelector(`.fleet-${boardId} .fleet-content`);
+        const ships = ['Carrier', 'Battleship', 'Cruiser', 'Submarine'];
+        const newP = document.createElement('p');
+        newP.classList.add(`${boardId}-${ships[shipLength-1]}`)
+        newP.textContent = ships[shipLength-1];
+        fleetContent.appendChild(newP);
+    }
 
 };
 
