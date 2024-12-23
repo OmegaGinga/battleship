@@ -1,5 +1,21 @@
-function renderBoard(player, boardId) {
-    const playerBoard = player.getPlayerBoard();
+function renderBoard(player, boardId, otherPlayer) {
+    const isComputer = player.isComputer;
+
+    let playerBoard;
+    let otherPlayerBoard;
+
+    if (isComputer) {
+        playerBoard = player.getComputerBoard();
+        otherPlayerBoard = otherPlayer.getPlayerBoard();
+    } else if (otherPlayer.isComputer) {
+        playerBoard = player.getPlayerBoard();
+        otherPlayerBoard = otherPlayer.getComputerBoard();
+    } else {
+        playerBoard = player.getPlayerBoard();
+        otherPlayerBoard = otherPlayer.getPlayerBoard();
+    }
+
+    
     const gameBoard = document.querySelector('.game-board');
     const toggleButtonContainer = document.querySelector('.toggle-button-container');
     const board = document.createElement('div');
@@ -10,16 +26,19 @@ function renderBoard(player, boardId) {
     const shipsContainer3 = document.createElement('div');
     const shipsContainer4 = document.createElement('div');
     const ships = [1, 1, 1, 1, 2, 2, 2, 3, 3, 4];
+    const shipsName = ['Carrier', 'Battleship', 'Cruiser', 'Submarine'];
     const newButtonDiv = document.createElement('div');
     const toggleButton = document.createElement('button');
     const fleetDiv = document.createElement('div');
     const heading = document.createElement('h2');
     const innerDiv = document.createElement('div');
     const shipInterface = document.querySelector('.ship-interface');
+    const temporalContainer = document.querySelector('.temporal-container');
 
     fleetDiv.setAttribute('id', boardId);
     fleetDiv.classList.add(`fleet-${boardId}`);
     innerDiv.classList.add('fleet-content');
+
     shipsContainer.classList.add('ships-container');
     shipsContainer.setAttribute('id', `${boardId}-ships-container`);
     shipsContainer1.classList.add('ships-container1');
@@ -29,19 +48,26 @@ function renderBoard(player, boardId) {
     board.classList.add('board');
     board.setAttribute('id', boardId);
     toggleButton.textContent = 'Toggle Ships Visibility';
-    toggleButtonContainer.appendChild(newButtonDiv);
+
+    if (!isComputer){
+        toggleButtonContainer.appendChild(newButtonDiv);
+    }
+
     newButtonDiv.appendChild(toggleButton);
     heading.textContent = 'FLEET';
+    temporalContainer.textContent = 'Please drag all the ships to your board to start.';
 
     gameBoard.appendChild(board);
     
     
-    
-    shipsPlaceContainer.appendChild(shipsContainer);
-    shipsContainer.appendChild(shipsContainer1);
-    shipsContainer.appendChild(shipsContainer2);
-    shipsContainer.appendChild(shipsContainer3);
-    shipsContainer.appendChild(shipsContainer4);
+    if(!isComputer){
+        shipsPlaceContainer.appendChild(shipsContainer);
+        shipsContainer.appendChild(shipsContainer1);
+        shipsContainer.appendChild(shipsContainer2);
+        shipsContainer.appendChild(shipsContainer3);
+        shipsContainer.appendChild(shipsContainer4);
+    }
+
     fleetDiv.appendChild(heading);
     fleetDiv.appendChild(innerDiv);
     shipInterface.appendChild(fleetDiv);
@@ -54,6 +80,9 @@ function renderBoard(player, boardId) {
         board.appendChild(cell);
 
         cell.addEventListener('click', function handleClick() {
+            console.log(otherPlayerBoard.availableShipsLeft());
+            console.log(playerBoard.availableShipsLeft());
+
             if(!player.isPlayerReady()){
                 console.log('Player is not ready yet!');
                 return;
@@ -63,15 +92,73 @@ function renderBoard(player, boardId) {
     
             if (result === 'Hit' || result === 'Sunk') {
                 cell.classList.remove('white');
-                cell.classList.toggle('hidden');
-                cell.classList.add('hit');                
-            } else if (result === 'Missed') {
+                cell.classList.remove('hidden');
+                cell.classList.add('hit'); 
+            } if (result === 'Sunk') {
+                const fleetContent = document.querySelector(`.fleet-${boardId} .fleet-content`);
+                const fleet = fleetContent.children;
+                const shipLength = node.ship.length;
+
+                console.log(result);
+                console.log(fleetContent);
+                console.log(fleet);
+
+                for (const ship of fleet) {
+                    console.log(ship.textContent);
+                    if (shipsName[shipLength -1] === ship.textContent.trim()) {
+                        ship.remove();
+                        break;
+                    }
+                }
+                
+            }  else if (result === 'Missed') {
                 cell.classList.add('missed');
                 cell.textContent = 'X';
             }
     
             cell.removeEventListener('click', handleClick);
             cell.style.pointerEvents = 'none';
+
+            if (isComputer && otherPlayer.isPlayerReady()) {
+                const { result, x, y} = player.computerAttack(otherPlayer);
+                const contraryCell = document.querySelector(`.pos_${x}_${y}.player1-board-cell`);
+                const contraryNodes = otherPlayerBoard.nodes;
+                const node = contraryNodes.find(node => node.x === x && node.y === y);
+                
+                if (result === 'Hit' || result === 'Sunk') {
+                    contraryCell.classList.remove('white');
+                    contraryCell.classList.remove('hidden');
+                    contraryCell.classList.add('hit');    
+                                
+                } 
+                if (result === 'Sunk'){
+                    const fleetContent = document.querySelector(`.fleet-player1-board .fleet-content`);
+                    const fleet = fleetContent.children;
+                    const shipLength = node.ship.length;
+
+                    console.log(result);
+                    console.log(fleetContent);
+                    console.log(fleet);
+
+                    for (const ship of fleet) {
+                        console.log(ship.textContent);
+                        if (shipsName[shipLength -1] === ship.textContent.trim()) {
+                            ship.remove();
+                            break;
+                        }
+                    }
+
+                } else if (result === 'Missed') {
+                    contraryCell.classList.add('missed');
+                    contraryCell.textContent = 'X';
+                }
+            }
+
+            if (!otherPlayerBoard.availableShipsLeft()) {
+                player.playerWin();
+            } else if (!playerBoard.availableShipsLeft()) {
+                otherPlayer.playerWin();
+            }
         });
 
         cell.addEventListener('dragover', (event) => {
@@ -85,6 +172,7 @@ function renderBoard(player, boardId) {
             const shipBoardId = event.dataTransfer.getData('boardId');
 
             if (targetBoardId !== shipBoardId) {
+                temporalContainer.textContent = 'HAHAHA! I knew you would do that.';
                 return;
             }
         
@@ -96,32 +184,60 @@ function renderBoard(player, boardId) {
                 if (direction === 'vertical') {
                     for (let i = 0; i < shipLength; i++) {
                         const cellPosition = board.querySelector(`.pos_${node.x + i}_${node.y}`);
-                        if (cellPosition) cellPosition.classList.add('white');
+                        if (cellPosition) {
+                            cellPosition.classList.add('white')                            
+                        };
                     }
                 } else if (direction === 'horizontal') {
                     for (let i = 0; i < shipLength; i++) {
                         const cellPosition = board.querySelector(`.pos_${node.x}_${node.y + i}`);
-                        if (cellPosition) cellPosition.classList.add('white');
+                        if (cellPosition) {
+                            cellPosition.classList.add('white');
+                        };
                     }
                 }
 
-                const shipDiv = document.getElementById(shipId);
-                const playerShipsContainer = document.querySelector(`#${boardId}-ships-container`);                
-                const shipContainers = playerShipsContainer.children;
+                if (!isComputer) {
+                    const shipDiv = document.getElementById(shipId);
+                    const playerShipsContainer = document.querySelector(`#${boardId}-ships-container`);
+                
+                    if (playerShipsContainer) { 
+                        const shipContainers = playerShipsContainer.children;
+                
+                        if (playerShipsContainer.contains(shipDiv)) {
+                            shipDiv.remove();
+                        }
+                
+                        const allAreEmpty = [...shipContainers].every(container => container.children.length === 0);
+                
+                        if (allAreEmpty) {
+                            temporalContainer.textContent = 'Game started!';
+                            const allCells = document.querySelector(`.board#${boardId}`);
+                            const cells = allCells.children;
 
-                if (playerShipsContainer.contains(shipDiv)) {
-                    shipDiv.remove();
+                            for (const cell of cells) {
+                                if(cell.classList.contains('white')){
+                                    cell.classList.remove('white');
+                                }
+                                if(cell.classList.contains('hidden')){
+                                    cell.classList.remove('hidden');
+                                }
+                            }
+
+                            player.playerIsReady();
+
+                            if(otherPlayer.isComputer){
+                                otherPlayer.playerIsReady();
+                            }
+                            console.log('Player is ready!');
+                            playerShipsContainer.remove();
+                        }
+                
+                        updateShips(shipLength);
+                    }
                 }
 
-                const allAreEmpty = [...shipContainers].every(container => container.children.length === 0);
-
-                if (allAreEmpty) {
-                    player.playerIsReady();
-                    console.log('Player is ready!');
-                    playerShipsContainer.remove();
-                }
-
-                updateShips(shipLength);
+                
                 
             }
         });
@@ -176,22 +292,35 @@ function renderBoard(player, boardId) {
         }
     });
 
+    let isHidden = false;
+
     toggleButton.addEventListener('click', () => {
         const boardCells = document.querySelectorAll('.board .cell');
-    
+        
         boardCells.forEach((cell) => {
             if (cell.classList.contains('white') && cell.classList.contains(`${boardId}-cell`)) {
-                cell.classList.toggle('hidden');
+                if (isHidden) {
+                    cell.classList.remove('hidden');
+                } else {
+                    cell.classList.add('hidden');
+                }
             }
         });
+
+        isHidden = !isHidden;
     });
+
+    if(isComputer){
+        ships.forEach(ship => {
+            updateShips(ship);
+        })
+    }
 
     function updateShips(shipLength){
         const fleetContent = document.querySelector(`.fleet-${boardId} .fleet-content`);
-        const ships = ['Carrier', 'Battleship', 'Cruiser', 'Submarine'];
         const newP = document.createElement('p');
         newP.classList.add(`${boardId}-${ships[shipLength-1]}`)
-        newP.textContent = ships[shipLength-1];
+        newP.textContent = shipsName[shipLength-1];
         fleetContent.appendChild(newP);
     }
 

@@ -197,6 +197,7 @@ body {
   align-items: center;
   color: white;
   gap: 15px;
+  font-size: 1.5rem;
 }
 
 .toggle-button-container{
@@ -219,4 +220,24 @@ button {
 button:hover{
   cursor: pointer;
   background-color: #021993;
+}
+
+.winner{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  position: fixed;
+  top: 400px;
+  left: 200px;
+  border: 2px solid #0088D2;
+  width: 70%;
+  height: 20%;
+  font-size: 2.5rem;
+  background-color: #021993;
+}
+
+audio {
+  display: none;
 }

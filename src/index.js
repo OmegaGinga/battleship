@@ -6,10 +6,13 @@ const { Player } = require('./player.js');
 const { ComputerPlayer } = require('./com.js');
 const { renderBoard } = require('./boardRenderer.js');
 
+const audio = document.querySelector('audio');
+
 let player1Name = '';
 let player2Name = '';
 
 function assignNames() {
+
     return new Promise((resolve) => {
         const temporalContainer = document.querySelector('.temporal-container');
         const title = document.createElement('h1');
@@ -95,10 +98,24 @@ function assignNames() {
 async function generatePlayers() {
     await assignNames();
     const player1 = Player(player1Name);
-    const player2 = Player(player2Name);
 
-    renderBoard(player1, 'player1-board');
-    renderBoard(player2, 'player2-board');
+    let player2;
+
+    if (isComputer(player2Name)) {
+        player2 = ComputerPlayer(player2Name);
+    } else {
+        player2 = Player(player2Name);
+    }
+
+    renderBoard(player1, 'player1-board', player2);
+    renderBoard(player2, 'player2-board', player1);
+    audio.loop = true;
+    audio.play();    
+}
+
+function isComputer(name) {
+    const computerNames = ["AI_Bot_3000", "Robo_Warrior", "Mega_AI", 'Terminator_69', 'Gatita_69', 'Maquina de fuego'];
+    return computerNames.includes(name);
 }
 
 generatePlayers();

@@ -1,6 +1,6 @@
 const { GameBoard } = require('./gameboard.js');
 
-const ComputerPlayer = () => {
+const ComputerPlayer = (name, isReady = false) => {
     const computerBoard = GameBoard();
     computerBoard.generateBoard();
     const shipSizes = [1, 1, 1, 1, 2, 2, 2, 3, 3, 4];
@@ -25,28 +25,62 @@ const ComputerPlayer = () => {
 
     const attackedNodes = new Set();
 
-    function computerAttack() {
+    function computerAttack(otherPlayer) {
         while (true) {
             const { x, y } = randomNumberGeneration();
 
             // Skip if this node has already been attacked
             if (attackedNodes.has(`${x},${y}`)) continue;
 
-            const result = computerBoard.receiveAttack(x, y);
+            const result = otherPlayer.receiveAttack(x, y);
             attackedNodes.add(`${x},${y}`);
 
             console.log(`Computer attacked (${x}, ${y}) and result: ${result}`);
 
-            if (result !== 'Already hit') break;
+            if (result !== 'Already hit') return { result, x, y };
         }
     }
 
+    function getComputerBoard() {
+        return computerBoard;
+    };
 
-    
+    function receiveAttack(x,y){
+        return computerBoard.receiveAttack(x,y);
+    }
+
+    function isPlayerReady(){
+        return isReady;
+    }
+
+    function playerIsReady(){
+        isReady = true;
+    }
+
+    function playerWin() {
+        const winnerText = document.createElement('div');
+        const temporalContainer = document.querySelector('.error-handler');
+        const restart = document.createElement('button');
+
+        winnerText.classList.add('winner');
+        winnerText.textContent = `${name} is the real winner!`;
+        temporalContainer.appendChild(winnerText);
+        restart.textContent = 'Restart';
+        winnerText.appendChild(restart);
+
+        restart.addEventListener('click', () => {
+            location.reload();
+        })
+    }
 
     return {
-        computerBoard,
         computerAttack,
+        getComputerBoard,
+        receiveAttack,
+        isPlayerReady,
+        playerIsReady,
+        playerWin,
+        isComputer: true,
     };
 };
 

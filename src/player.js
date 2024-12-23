@@ -39,6 +39,22 @@ const Player = (name, isReady = false) => {
         return playerBoard.receiveAttack(x,y);
     }
 
+    function playerWin() {
+        const winnerText = document.createElement('div');
+        const temporalContainer = document.querySelector('.error-handler');
+        const restart = document.createElement('button');
+
+        winnerText.classList.add('winner');
+        winnerText.textContent = `${name} is the real winner!`;
+        temporalContainer.appendChild(winnerText);
+        restart.textContent = 'Restart';
+        winnerText.appendChild(restart);
+
+        restart.addEventListener('click', () => {
+            location.reload();
+        })
+    }
+
     return {
         getName,
         setName,
@@ -48,6 +64,7 @@ const Player = (name, isReady = false) => {
         getShips,        
         allShipsSunk,
         receiveAttack,
+        playerWin,
     }
 }
 
